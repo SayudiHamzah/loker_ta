@@ -36,8 +36,10 @@ Route::post('login', [AuthController::class, 'authenticate']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::resource('user', UserController::class)->except(['show']);
+Route::put('/loker/hak-hapus-akses', [ModelLokerController::class, 'deleteStatus'])->name('loker.delete.akses');
 Route::get('/loker/history/{id}', [ModelLokerController::class, 'history'])->name('loker.history');
 Route::put('/loker/update-status/{id}', [ModelLokerController::class, 'updateStatus'])->name('loker.status');
+Route::put('/loker/update-dashst/{id}/{user_id}', [ModelLokerController::class, 'updateStatusDash'])->name('loker.statusDash');
 Route::get('/loker/hak-akses/{id}', [ModelLokerController::class, 'edit'])->name('loker.akses');
 Route::put('/loker/hak-akses', [ModelLokerController::class, 'updateStatus'])->name('loker.akses-update');
 

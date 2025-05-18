@@ -15,14 +15,78 @@
     <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .qr-code-container {
-            border: 2px solid #007bff; /* Border biru */
-            border-radius: 10px; /* Sudut yang melengkung */
-            padding: 20px; /* Ruang di sekitar QR code */
-            display: inline-block; /* Supaya tetap terpusat dan bisa menyesuaikan */
-            background-color: #f8f9fa; /* Latar belakang abu-abu muda */
+            border: 2px solid #007bff;
+            /* Border biru */
+            border-radius: 10px;
+            /* Sudut yang melengkung */
+            padding: 20px;
+            /* Ruang di sekitar QR code */
+            display: inline-block;
+            /* Supaya tetap terpusat dan bisa menyesuaikan */
+            background-color: #f8f9fa;
+            /* Latar belakang abu-abu muda */
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            font-family: sans-serif;
+            color: #aaa;
+            /* Warna teks non-aktif */
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        input:checked~.label-text {
+            color: #000;
         }
     </style>
 
@@ -54,7 +118,8 @@
 
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__wobble" src="{{ asset('dist/img/AdminLTELogo.png') }}"  alt="AdminLTELogo" height="60" width="60">
+            <img class="animation__wobble" src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
+                height="60" width="60">
         </div>
 
         <!-- Navbar -->

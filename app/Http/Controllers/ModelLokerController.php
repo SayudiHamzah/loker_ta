@@ -201,4 +201,70 @@ class ModelLokerController extends Controller
         return redirect()->route('loker.show', $dataloker->id)
             ->with('success', 'Loker Updated: ' . $dataloker->name_locker);
     }
+    public function updateStatusDash($id, $user_id)
+    {
+        // dd($request);
+        $dataloker = ModelLoker::findOrFail($id);
+        $EnQr =   ServiceLoker::generateRc4Uuid();
+
+        $dataQr = ModelQRcode::create([
+            'user_id' => $user_id,
+            'qrcode' => $EnQr,
+        ]);
+        // Simpan ke tabel loker
+        if ($dataloker->status == "1") {
+            $dataloker->update([
+                'status' => "0",
+                'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+            ]);
+        } else {
+            $dataloker->update([
+                'status' => 1,
+                'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+            ]);
+        }
+
+
+        ModelLog::create([
+            'user_id' => $user_id,
+            'loker_id' => $id,
+            'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+            'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
+        ]);
+        // return redirect()->route('loker.show', $dataloker->id)
+        //     ->with('success', 'Loker Updated: ' . $dataloker->name_locker);
+        return response()->json([
+            'success' => true,
+            'message' => 'Akses loker berhasil diubah.'
+        ]);
+    }
+    public function deleteStatus(Request $request)
+    {
+        // dd("masuk");
+        $dataloker = ModelLoker::findOrFail($request->id);
+        $EnQr =   ServiceLoker::generateRc4Uuid();
+
+        $dataQr = ModelQRcode::create([
+            'user_id' => 1,
+            'qrcode' => $EnQr,
+        ]);
+        // Simpan ke tabel loker
+        $dataloker->update([
+            'user_id' => 1,
+            'status' => "0",
+            'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+        ]);
+
+        ModelLog::create([
+            'user_id' => 1,
+            'status_activitas' => "1",
+            'loker_id' => $request->id,
+            'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+            'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Akses loker berhasil dihapus.'
+        ]);
+    }
 }

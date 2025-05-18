@@ -29,7 +29,12 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-header">MANAJEMEN DATA</li>
-
+                <li class="nav-item">
+                    <a href="{{ url('manual') }}" class="nav-link {{ Request::is('manual') ? 'active' : '' }}">
+                        <i class="fas fa-clock"></i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ url('user') }}" class="nav-link {{ Request::is('user') ? 'active' : '' }}">
                         <i class="fas fa-user"></i>
@@ -53,12 +58,7 @@
                         <p>Datalog</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ url('manual') }}" class="nav-link {{ Request::is('manual') ? 'active' : '' }}">
-                        <i class="fas fa-clock"></i>
-                        <p>Manual Kontrol</p>
-                    </a>
-                </li>
+
             </ul>
         </nav>
 
