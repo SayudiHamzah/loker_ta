@@ -17,9 +17,15 @@ use App\Models\ModelQRcode;
 class ApiController extends Controller
 {
 
-    public function historyDatalog($id)
+    public function historyDatalog($id, $user_id)
     {
-        $datalog = ServiceApi::history($id);
+
+        $response = ServiceApi::history($id);
+        $datalog = collect($response)
+            ->where('user_id', $user_id)
+            ->sortByDesc('created_at')
+            ->values();
+
         return response()->json([
             'success' => true,
             'message' => 'Data history berhasil diambil.',
@@ -105,57 +111,62 @@ class ApiController extends Controller
         ]);
     }
 
-    public function updateStatus($id, $code)
+    public function updateStatusByCode($code)
     {
-        // dd($request);
-        // $dataloker = ModelLoker::findOrFail($id);
-        $dataloker = ModelLoker::with('qrcode')->findOrFail($id);
+        // Dekripsi kode yang dikirim user
+        $decryptedUserCode = ServiceLoker::decryptRc4Uuid($code);
 
-        // dd($dataloker->qrcode->qrcode);
+        // Ambil semua data loker dengan relasi qrcode
+        $allLoker = ModelLoker::with('qrcode')->get();
 
-        //kode dari user
-        $DekrU = ServiceLoker::decryptRc4Uuid($code);
-        $DekrD = ServiceLoker::decryptRc4Uuid($dataloker->qrcode->qrcode);
-        // dd($DekrU);
+        // Temukan data loker yang memiliki qrcode match setelah dekripsi
+        $matchedLoker = null;
 
-        if ($DekrD === $DekrU) {
-            $EnQr =   ServiceLoker::generateRc4Uuid();
-            $dataQr = ModelQRcode::create([
-                'user_id' => $dataloker->user_id,
-                'qrcode' => $EnQr,
-            ]);
-            // Simpan ke tabel loker
-            if ($dataloker->status == '1') {
-                $dataloker->update([
-                    'status' => '0',
-                    'qrcode_id' => $dataQr->id,
-                ]);
-            } else {
-                $dataloker->update([
-                    'status' => '1',
-                    'qrcode_id' => $dataQr->id,
-                ]);
+        foreach ($allLoker as $loker) {
+            if (!$loker->qrcode) continue;
+
+            $decryptedDbCode = ServiceLoker::decryptRc4Uuid($loker->qrcode->qrcode);
+
+            if ($decryptedDbCode === $decryptedUserCode) {
+                $matchedLoker = $loker;
+                break;
             }
+        }
 
-            ModelLog::create([
-                'user_id' => $dataloker->user_id,
-                'loker_id' => $id,
-                'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
-                'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
-            ]);
-            return response()->json([
-                'success' => true,
-                'message' => 'Data loker berhasil di update',
-                'data_loker' => $dataloker,
-                'status' => $dataloker->status,
-            ]);
-        } else {
+        // Jika tidak ditemukan, kembalikan respons error
+        if (!$matchedLoker) {
             return response()->json([
                 'success' => false,
-                'message' => 'Data error',
-                // 'data_loker' => $dataloker,
-                // 'datauser' => $datauser,
-            ]);
+                'message' => 'Kode QR tidak ditemukan atau tidak valid.',
+            ], 404);
         }
+
+        // Jika cocok, buat qrcode baru dan update status
+        $newQrCode = ServiceLoker::generateRc4Uuid();
+        $dataQr = ModelQRcode::create([
+            'user_id' => $matchedLoker->user_id,
+            'qrcode' => $newQrCode,
+        ]);
+
+        $newStatus = $matchedLoker->status == '1' ? '0' : '1';
+
+        $matchedLoker->update([
+            'status' => $newStatus,
+            'qrcode_id' => $dataQr->id,
+        ]);
+
+        ModelLog::create([
+            'user_id' => $matchedLoker->user_id,
+            'loker_id' => $matchedLoker->id,
+            'qrcode_id' => $dataQr->id,
+            'waktu_penggunaan' => now()->format('H:i:s'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data loker berhasil diupdate.',
+            'data_loker' => $matchedLoker,
+            'status' => $matchedLoker->status,
+        ]);
     }
 }
