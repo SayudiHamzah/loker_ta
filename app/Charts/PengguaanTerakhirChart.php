@@ -34,8 +34,8 @@ class PengguaanTerakhirChart extends Chart
             // Ambil jumlah penggunaan per hari dan jam
             $data = DB::table('model_logs')
                 ->select(
-                    DB::raw('DAYOFWEEK(waktu_penggunaan) as hari'),
-                    DB::raw('HOUR(waktu_penggunaan) as jam'),
+                    DB::raw('DAYOFWEEK(created_at) as hari'),
+                    DB::raw('HOUR(created_at) as jam'),
                     DB::raw('COUNT(*) as total')
                 )
                 ->where('user_id', $user->id)

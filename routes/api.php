@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ModelLokerController;
 
 
 
@@ -15,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('loker', [ApiController::class, 'loker_akses'])->name('api.loker');
     Route::get('loker/{id}', [ApiController::class, 'show'])->name('api.loker.show');
     Route::post('/logout', [ApiController::class, 'logout']);
+    Route::put('/loker/update-status/{id}', [ModelLokerController::class, 'updateStatus'])->name('loker.status');
+    // Route::put('/loker/update-dashst/{id}/{user_id}', [ModelLokerController::class, 'updateStatusDash'])->name('loker.statusDash');
     // GET | /users/{user} | show | users.show
 
 });
