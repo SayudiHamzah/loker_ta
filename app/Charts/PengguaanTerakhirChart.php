@@ -13,52 +13,40 @@ class PengguaanTerakhirChart extends Chart
      * @return void
      */
     public function __construct()
-    {
-        parent::__construct();
+{
+    parent::__construct();
 
-        $users = DB::table('users')->get();
+    $users = DB::table('users')->get();
 
-        // Buat label hari dan jam (7 hari × 24 jam = 168 label)
-        $days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-        $labels = [];
+    // Label 7 hari saja
+    $days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    $this->labels($days);
 
-        for ($d = 1; $d <= 7; $d++) { // DAYOFWEEK: 1=Sunday, ..., 7=Saturday
-            for ($h = 0; $h <= 23; $h++) {
-                $labels[] = $days[$d % 7] . ' ' . str_pad($h, 2, '0', STR_PAD_LEFT);
-            }
+    foreach ($users as $user) {
+        // Ambil log terakhir per user
+        $latestLog = DB::table('model_logs')
+            ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->first();
+
+        // Siapkan array data 7 hari (0)
+        $userData = array_fill(0, 7, 0);
+
+        if ($latestLog) {
+            // Ambil hari dari tanggal akses terakhir (0 = Minggu, 6 = Sabtu)
+            $dayIndex = \Carbon\Carbon::parse($latestLog->created_at)->dayOfWeek;
+            $userData[$dayIndex] = 1;
         }
 
-        $this->labels($labels);
-
-        foreach ($users as $user) {
-            // Ambil jumlah penggunaan per hari dan jam
-            $data = DB::table('model_logs')
-                ->select(
-                    DB::raw('DAYOFWEEK(created_at) as hari'),
-                    DB::raw('HOUR(created_at) as jam'),
-                    DB::raw('COUNT(*) as total')
-                )
-                ->where('user_id', $user->id)
-                ->groupBy('hari', 'jam')
-                ->get();
-
-            // Bentuk array data akses
-            $userData = array_fill(0, 168, 0); // 7 hari x 24 jam
-
-            foreach ($data as $row) {
-                $index = (($row->hari % 7) * 24) + $row->jam;
-                $userData[$index] = $row->total;
-            }
-
-            $this->dataset($user->name, 'bar', $userData)
-                ->backgroundColor($this->randomColor())
-                ->color('rgba(0, 0, 0, 1)');
-        }
+        $this->dataset($user->name, 'bar', $userData)
+            ->backgroundColor($this->randomColor())
+            ->color('rgba(0, 0, 0, 1)');
     }
+}
+
 
     protected function randomColor()
     {
         return 'rgba(' . rand(0, 255) . ',' . rand(0, 255) . ',' . rand(0, 255) . ',0.6)';
     }
-
 }

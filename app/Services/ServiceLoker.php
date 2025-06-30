@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Str;
+use App\Models\rc4Model;
 
 class ServiceLoker
 {
@@ -45,9 +46,13 @@ class ServiceLoker
     {
         $uuid = Str::uuid()->toString();
         $encrypted = self::rc4Encrypt(self::$key, $uuid);
-
-        // Base64 URL-safe
-        return strtr(base64_encode($encrypted), '+/', '-_');
+        $datafinal = strtr(base64_encode($encrypted), '+/', '-_');
+        rc4Model::create([
+            'uuid' => $uuid,
+            'uuid_rc4' => $encrypted,
+            'uuid_encode' => $datafinal
+        ]);
+        return $datafinal;
     }
 
     /**

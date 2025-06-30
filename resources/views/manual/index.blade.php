@@ -9,26 +9,23 @@
                     <div class="row">
                         <!-- Chart Section -->
                         <div class="col-md-12 col-lg-6 mb-4">
-                            {!! $chart->container() !!}
+                          {!! $chart->container() !!}
                         </div>
 
                         <!-- Card with Image -->
-                        <div class="col-md-12 col-lg-6">
-                            <div class="card mb-2">
-                                <img class="card-img-top" src="../dist/img/photo3.jpg" alt="Dist Photo 3">
-                                <div class="card-img-overlay">
-                                    <h5 class="card-title text-primary">Card Title</h5>
-                                    <p class="card-text pb-1 pt-1 text-white">
-                                        Lorem ipsum dolor <br>
-                                        sit amet, consectetur <br>
-                                        adipisicing elit sed <br>
-                                        do eiusmod tempor.
-                                    </p>
-                                    <a href="#" class="text-primary">Last update 3 days ago</a>
-                                </div>
+                        <div class="col-md-12 col-lg-6 mb-4">
+                          <div class="card mb-2 h-100">
+                            <img class="card-img-top img-fluid" src="../dist/img/photo3.jpg" alt="Dist Photo 3">
+                            <div class="card-img-overlay" style="background-color: rgba(0,0,0,0.5);">
+                              <h5 class="card-title text-primary">Card Title</h5>
+                              <p class="card-text pb-1 pt-1 text-white">
+                                E-locker adalah sistem penyimpanan barang pribadi berbasis teknologi digital yang dirancang untuk memberikan keamanan dan kemudahan akses. Sistem ini menggunakan loker yang dilengkapi dengan kunci digital, seperti QR code, sebagai metode autentikasi. Untuk meningkatkan perlindungan data, E-locker menerapkan enkripsi <strong>RC4</strong> dalam proses pengamanan informasi pengguna dan kode autentikasi. Dengan teknologi ini, E-locker menjadi solusi praktis dan aman bagi siapa pun yang membutuhkan tempat penyimpanan sementara yang terpercaya, baik di lingkungan kerja, pendidikan, maupun fasilitas umum.
+                              </p>
                             </div>
+                          </div>
                         </div>
-                    </div>
+                      </div>
+
                 </div>
             </div>
             <h4 class="mb-4">Manajemen Hak Akses</h4>

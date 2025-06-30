@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
 use App\Models\ModelLog;
+use App\Models\rc4Model;
+use Illuminate\Support\Str;
+
 class ServiceApi
 {
     public static function  rc4Encrypt($key, $data)
@@ -31,13 +33,19 @@ class ServiceApi
         return $res;
     }
 
-    public static function generateRc4Uuid()
-    {
-        $key = 'secret_key';
-        $uuid = Str::uuid()->toString();
-        $encrypted = ServiceLoker::rc4Encrypt($key, $uuid); // ✅ akses $this->key
-        return base64_encode($encrypted);
-    }
+    // public static function generateRc4Uuid()
+    // {
+    //     $key = 'secret_key';
+    //     $uuid = Str::uuid()->toString();
+    //     $encrypted = ServiceLoker::rc4Encrypt($key, $uuid); // ✅ akses $this->key
+    //     $datafinal = strtr(base64_encode($encrypted), '+/', '-_');
+    //     rc4Model::create([
+    //         'uuid_rc4' => $uuid,
+    //         'uuid_encode' => $datafinal
+    //     ]);
+    //     dd($datafinal);
+    //     return $datafinal;
+    // }
 
     public static function  decryptRc4Uuid($encryptedBase64)
     {
@@ -49,9 +57,9 @@ class ServiceApi
     public static function  history($id)
     {
         $datalog = ModelLog::with('qrcode', 'user')
-        ->where('loker_id', $id)
-        ->orderBy('created_at', 'desc')
-        ->get();
-        return $datalog ;
+            ->where('loker_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return $datalog;
     }
 }

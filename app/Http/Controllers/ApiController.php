@@ -32,6 +32,15 @@ class ApiController extends Controller
             'data' => $datalog
         ]);
     }
+    public function inforelay()
+    {
+
+        // $response = ModelLoker::all();/
+
+
+        $response = ModelLoker::all()->makeHidden(['qrcode_id', 'user_id', 'created_at', 'updated_at']);
+        return response()->json($response);
+    }
     public function login(Request $request)
     {
         $request->validate([
