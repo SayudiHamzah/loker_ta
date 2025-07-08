@@ -268,25 +268,25 @@ class ModelLokerController extends Controller
         ]);
     }
 
-    public function deleteStatusApi($loker_id)
+    public function deleteStatusApi($loker_id, $user_id)
     {
         // dd("masuk");
         $dataloker = ModelLoker::findOrFail($loker_id);
         $EnQr =   ServiceLoker::generateRc4Uuid();
 
         $dataQr = ModelQRcode::create([
-            'user_id' => 1,
+            'user_id' => $user_id,
             'qrcode' => $EnQr,
         ]);
         // Simpan ke tabel loker
         $dataloker->update([
-            'user_id' => 1,
+            'user_id' => $user_id,
             'status' => "0",
             'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
         ]);
 
         ModelLog::create([
-            'user_id' => 1,
+            'user_id' => $user_id,
             'status_activitas' => "1",
             'loker_id' => $loker_id,
             'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
