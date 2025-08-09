@@ -8,7 +8,9 @@ use Illuminate\Support\Str;
 
 class ServiceApi
 {
-    public static function  rc4Encrypt($key, $data)
+    // protected static string $key = 'secret_key';
+
+    public static function  rc4Encrypt($data, $key)
     {
         $s = range(0, 255);
         $j = 0;
@@ -35,7 +37,7 @@ class ServiceApi
 
     // public static function generateRc4Uuid()
     // {
-    //     $key = 'secret_key';
+    //     $self::$key = 'secret_key';
     //     $uuid = Str::uuid()->toString();
     //     $encrypted = ServiceLoker::rc4Encrypt($key, $uuid); // ✅ akses $this->key
     //     $datafinal = strtr(base64_encode($encrypted), '+/', '-_');
@@ -47,11 +49,11 @@ class ServiceApi
     //     return $datafinal;
     // }
 
-    public static function  decryptRc4Uuid($encryptedBase64)
+    public static function  decryptRc4Uuid($encryptedBase64, $key)
     {
-        $key = 'secret_key';
+        // $key = 'secret_key';
         $encrypted = base64_decode($encryptedBase64);
-        $decrypted = ServiceLoker::rc4Encrypt($key, $encrypted); // ✅ akses $this->key
+        $decrypted = ServiceLoker::rc4Encrypt($key, $encrypted);
         return $decrypted;
     }
     public static function  history($id)

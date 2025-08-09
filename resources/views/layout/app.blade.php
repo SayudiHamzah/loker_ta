@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AdminLTE 3 | Dashboard 2</title>
+    <title>E-Locker dengan Keamanan Kriptografi Algoritma RC4</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -168,7 +168,9 @@
 
         <!-- Main Footer -->
         <footer class="main-footer">
-            <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+            {{--  <strong>Copyright &copy; 2014-2021 E-Locker RC4</strong>  --}}
+            <strong id="copyright"></strong>
+
             All rights reserved.
             <div class="float-right d-none d-sm-inline-block">
                 <b>Version</b> 3.2.0
@@ -195,6 +197,14 @@
     <!-- ChartJS -->
     <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('dist/js/pages/dashboard2.js') }}"></script>
+
+    <script>
+        const startYear = 2024;
+        const currentYear = new Date().getFullYear();
+        document.getElementById("copyright").innerHTML =
+            `&copy; ${startYear === currentYear ? currentYear : `${startYear}–${currentYear}`} E-Locker RC4`;
+    </script>
+
 
 
     @yield('js_aja')

@@ -9,22 +9,53 @@
                     <div class="row">
                         <!-- Chart Section -->
                         <div class="col-md-12 col-lg-6 mb-4">
-                          {!! $chart->container() !!}
+                            {!! $chart->container() !!}
                         </div>
 
                         <!-- Card with Image -->
-                        <div class="col-md-12 col-lg-6 mb-4">
+                        {{--  <div class="col-md-12 col-lg-6 mb-4">
                           <div class="card mb-2 h-100">
-                            <img class="card-img-top img-fluid" src="../dist/img/photo3.jpg" alt="Dist Photo 3">
+                            <img class="card-img-top img-fluid" src="../dist/img/A2.jpg" alt="Dist Photo 3">
                             <div class="card-img-overlay" style="background-color: rgba(0,0,0,0.5);">
-                              <h5 class="card-title text-primary">Card Title</h5>
+                              <h5 class="card-title text-primary">E-Locker dengan Keamanan Kriptografi Algoritma RC4</h5>
                               <p class="card-text pb-1 pt-1 text-white">
                                 E-locker adalah sistem penyimpanan barang pribadi berbasis teknologi digital yang dirancang untuk memberikan keamanan dan kemudahan akses. Sistem ini menggunakan loker yang dilengkapi dengan kunci digital, seperti QR code, sebagai metode autentikasi. Untuk meningkatkan perlindungan data, E-locker menerapkan enkripsi <strong>RC4</strong> dalam proses pengamanan informasi pengguna dan kode autentikasi. Dengan teknologi ini, E-locker menjadi solusi praktis dan aman bagi siapa pun yang membutuhkan tempat penyimpanan sementara yang terpercaya, baik di lingkungan kerja, pendidikan, maupun fasilitas umum.
                               </p>
                             </div>
                           </div>
+                        </div>  --}}
+                        <div class="col-md-12 col-lg-6 mb-4">
+                            <div class="card mb-2 h-100 text-white">
+                                <div class="card-bg"
+                                    style="
+                                background-image: url('../dist/img/A2.jpg');
+                                background-size: cover;
+                                background-position: center;
+                                height: 100%;
+                                min-height: 300px; /* Sesuaikan tinggi minimal */
+                                position: relative;
+                              ">
+                                    <div class="card-img-overlay" style="background-color: rgba(0,0,0,0.5);">
+                                        <h5 class="card-title text-primary">
+                                            E-Locker dengan Keamanan Kriptografi Algoritma RC4
+                                        </h5>
+                                        <p class="card-text pb-1 pt-1">
+                                            E-locker adalah sistem penyimpanan barang pribadi berbasis teknologi digital
+                                            yang dirancang untuk memberikan keamanan dan kemudahan akses. Sistem ini
+                                            menggunakan loker yang dilengkapi dengan kunci digital, seperti QR code, sebagai
+                                            metode autentikasi. Untuk meningkatkan perlindungan data, E-locker menerapkan
+                                            enkripsi <strong>RC4</strong> dalam proses pengamanan informasi pengguna dan
+                                            kode autentikasi. Dengan teknologi ini, E-locker menjadi solusi praktis dan aman
+                                            bagi siapa pun yang membutuhkan tempat penyimpanan sementara yang terpercaya,
+                                            baik di lingkungan kerja, pendidikan, maupun fasilitas umum.
+
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
+
+                    </div>
 
                 </div>
             </div>
@@ -60,9 +91,9 @@
                                     </div>
                                     <span class="label-text" id="labelText{{ $loker['id'] }}">
                                         @if ($status)
-                                        ✅ Diizinkan - <span class="badge badge-success">{{ $userName }}</span>
+                                            ✅ Diizinkan - <span class="badge badge-success">{{ $userName }}</span>
                                         @else
-                                        ❌ Kosong
+                                            ❌ Kosong
                                         @endif
                                     </span>
                                 </label>

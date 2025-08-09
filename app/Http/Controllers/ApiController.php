@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\ServiceLoker;
+use App\Models\ModelLog;
+use App\Models\ModelLoker;
+use App\Models\ModelQRcode;
+use App\Models\TokenModel;
+use App\Models\User;
 use App\Services\ServiceApi;
+use App\Services\ServiceLoker;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use Carbon\Carbon;
-use App\Models\ModelLoker;
-use App\Models\ModelLog;
-use App\Models\ModelQRcode;
 // use App\Models\User;
 
 class ApiController extends Controller
@@ -63,7 +64,7 @@ class ApiController extends Controller
             'name' => 'auth_token',
             'token' => hash('sha256', $plainTextToken),
             'abilities' => ['*'],
-            'expires_at' => Carbon::now()->addDays(7),
+            'expires_at' => Carbon::now()->addDays(30),
         ]);
 
         $modelLokerId = ModelLoker::where('user_id', $user->id)->value('id');
@@ -110,20 +111,40 @@ class ApiController extends Controller
     public function show($id)
     {
         $data = ModelLoker::with('qrcode')->findOrFail($id);
+        // dd($data);
+
+        $response = ModelLoker::with('qrcode')->findOrFail($id)->makeHidden(['qrcode', 'qrcode_id']);
+        $key = TokenModel::where('tokenable_id', $data->qrcode->user_id)->first();
+        // dd($data->qrcode->qrcode);
+
+        $qr = ServiceLoker::rc4Encrypt($data->qrcode->qrcode, $key->token);
+        // $qr = rc4Encrypt($data->qrcode, $key);
+        $hexaqr = bin2hex($qr);
+        // $datafinal = strtr(base64_encode($qr), '+/', '-_');
+
         $datauser = User::findOrFail($data->qrcode->user_id);
+
         return response()->json([
             'success' => true,
             'message' => 'Data loker milik user berhasil diambil.',
-            'data_loker' => $data,
+            'data_loker' => $response,
             'datauser' => $datauser,
-
+            'qrcode' => $hexaqr,
+            "key" => $key,
+            'qtm'=>$data->qrcode
         ]);
     }
 
     public function updateStatusByCode($code)
     {
         // Dekripsi kode yang dikirim user
-        $decryptedUserCode = ServiceLoker::decryptRc4Uuid($code);
+        // $keym = TokenModel::find(4);
+        $keym = TokenModel::where('tokenable_id', 4)->first();
+        // dd($keym);
+
+        $key = substr($keym->token, 0, 10);
+        // dd($key);
+        $decryptedUserCode = ServiceLoker::decryptRc4Uuid($code, $key);
 
         // Ambil semua data loker dengan relasi qrcode
         $allLoker = ModelLoker::with('qrcode')->get();
@@ -134,7 +155,7 @@ class ApiController extends Controller
         foreach ($allLoker as $loker) {
             if (!$loker->qrcode) continue;
 
-            $decryptedDbCode = ServiceLoker::decryptRc4Uuid($loker->qrcode->qrcode);
+            $decryptedDbCode = ServiceLoker::decryptRc4Uuid($loker->qrcode->qrcode, $key);
 
             if ($decryptedDbCode === $decryptedUserCode) {
                 $matchedLoker = $loker;
@@ -151,7 +172,7 @@ class ApiController extends Controller
         }
 
         // Jika cocok, buat qrcode baru dan update status
-        $newQrCode = ServiceLoker::generateRc4Uuid();
+        $newQrCode = ServiceLoker::generateRc4Uuid($key);
         $dataQr = ModelQRcode::create([
             'user_id' => $matchedLoker->user_id,
             'qrcode' => $newQrCode,

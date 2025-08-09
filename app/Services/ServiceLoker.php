@@ -7,7 +7,7 @@ use App\Models\rc4Model;
 
 class ServiceLoker
 {
-    protected static string $key = 'secret_key';
+    // protected static string $key = 'secret_key';
 
     /**
      * RC4 Encrypt or Decrypt
@@ -42,13 +42,15 @@ class ServiceLoker
     /**
      * Generate RC4 Encrypted UUID (Base64-encoded, URL-safe)
      */
-    public static function generateRc4Uuid(): string
+    public static function generateRc4Uuid($key): string
     {
         $uuid = Str::uuid()->toString();
-        $encrypted = self::rc4Encrypt(self::$key, $uuid);
+        // $uuid = Str::uuid()->toString();
+        $uuidNoDash = str_replace('-', '', $uuid);
+        $encrypted = self::rc4Encrypt($key, $uuidNoDash);
         $datafinal = strtr(base64_encode($encrypted), '+/', '-_');
         rc4Model::create([
-            'uuid' => $uuid,
+            'uuid' => $uuidNoDash,
             'uuid_rc4' => $encrypted,
             'uuid_encode' => $datafinal
         ]);
@@ -58,12 +60,12 @@ class ServiceLoker
     /**
      * Decrypt Base64 (URL-safe) Encoded RC4 UUID
      */
-    public static function decryptRc4Uuid(string $encoded): string
+    public static function decryptRc4Uuid(string $encoded, $key): string
     {
         // Balikkan base64 URL-safe ke standar
         $base64 = strtr($encoded, '-_', '+/');
         $encrypted = base64_decode($base64);
 
-        return self::rc4Encrypt(self::$key, $encrypted);
+        return self::rc4Encrypt($key, $encrypted);
     }
 }
