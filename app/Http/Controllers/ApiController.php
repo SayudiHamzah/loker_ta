@@ -22,14 +22,17 @@ class ApiController extends Controller
     {
 
         $response = ServiceApi::history($id);
+        // dd($response);
         $datalog = collect($response)
             ->where('user_id', $user_id)
             ->sortByDesc('created_at')
             ->values();
 
+
+
         return response()->json([
             'success' => true,
-            'message' => 'Data history berhasil diambil.',
+            'message' => 'Data history berhasil diambil',
             'data' => $datalog
         ]);
     }
@@ -66,6 +69,10 @@ class ApiController extends Controller
             'abilities' => ['*'],
             'expires_at' => Carbon::now()->addDays(30),
         ]);
+        $data_created = $user->created_at;
+        $data_hak = $user->status;
+        $gabung = $data_hak . $data_created;
+        $resultKey = str_replace(['-', ' ', ':'], '', $gabung);
 
         $modelLokerId = ModelLoker::where('user_id', $user->id)->value('id');
 
@@ -74,6 +81,7 @@ class ApiController extends Controller
             'access_token' => $plainTextToken,
             'token_type' => 'Bearer',
             'expires_at' => $tokenResult->expires_at,
+            'key' => $resultKey,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -108,60 +116,60 @@ class ApiController extends Controller
             'data' => $datas[0]
         ]);
     }
-    public function show($id)
+    public function show($id, $qrcode_id)
     {
         $data = ModelLoker::with('qrcode')->findOrFail($id);
-        // dd($data);
+        $response = ModelLoker::with('qrcode')->findOrFail($id)->makeHidden(['qrcode_id']);
+        // dd($response->qrcode->qrcode);
+        $datauser = User::findOrFail($response->user_id);
+        $data_hak = $datauser->status;
+        $data_created = $datauser->created_at;
+        $gabung = $data_hak . $data_created;
+        $resultKey = str_replace(['-', ' ', ':'], '', $gabung);
+        $a = ServiceApi::history($id);
+        // dd($response->qrcode->id);
+        // $resultMode =  ModelLog::where($response->qrcode->id, "qrcode_id");
+        $resultMode = ModelLog::where("qrcode_id", $qrcode_id)->get();
 
-        $response = ModelLoker::with('qrcode')->findOrFail($id)->makeHidden(['qrcode', 'qrcode_id']);
-        $key = TokenModel::where('tokenable_id', $data->qrcode->user_id)->first();
-        // dd($data->qrcode->qrcode);
 
-        $qr = ServiceLoker::rc4Encrypt($data->qrcode->qrcode, $key->token);
-        // $qr = rc4Encrypt($data->qrcode, $key);
-        $hexaqr = bin2hex($qr);
-        // $datafinal = strtr(base64_encode($qr), '+/', '-_');
+        // dd($resultMode);
 
+        // dd($response->qrcode->qrcode );
+        $qr = ServiceLoker::decryptRc4Uuid($response->qrcode->qrcode, $resultKey);
+        // dd($qr);
         $datauser = User::findOrFail($data->qrcode->user_id);
-
         return response()->json([
             'success' => true,
             'message' => 'Data loker milik user berhasil diambil.',
             'data_loker' => $response,
             'datauser' => $datauser,
-            'qrcode' => $hexaqr,
-            "key" => $key,
-            'qtm'=>$data->qrcode
+            'qrcode' => $qr,
+            "datalog" =>  $resultMode[0]
         ]);
     }
 
-    public function updateStatusByCode($code)
+
+
+    public function updateStatusByCode($user_id, $code)
     {
-        // Dekripsi kode yang dikirim user
-        // $keym = TokenModel::find(4);
-        $keym = TokenModel::where('tokenable_id', 4)->first();
-        // dd($keym);
-
-        $key = substr($keym->token, 0, 10);
-        // dd($key);
-        $decryptedUserCode = ServiceLoker::decryptRc4Uuid($code, $key);
-
-        // Ambil semua data loker dengan relasi qrcode
-        $allLoker = ModelLoker::with('qrcode')->get();
-
-        // Temukan data loker yang memiliki qrcode match setelah dekripsi
-        $matchedLoker = null;
-
-        foreach ($allLoker as $loker) {
-            if (!$loker->qrcode) continue;
-
-            $decryptedDbCode = ServiceLoker::decryptRc4Uuid($loker->qrcode->qrcode, $key);
-
-            if ($decryptedDbCode === $decryptedUserCode) {
-                $matchedLoker = $loker;
-                break;
-            }
-        }
+        // $allLoker = ModelLoker::with('qrcode')->get();
+        // dd($code);
+        $datauser = User::findOrFail($user_id);
+        // dd($datauser);
+        $data_hak = $datauser->status;
+        $data_created = $datauser->created_at;
+        $gabung = $data_hak . $data_created;
+        $resultKey = str_replace(['-', ' ', ':'], '', $gabung);
+        $matchedLoker = ModelLoker::with('qrcode')
+            ->where('user_id', $user_id)
+            ->get()
+            ->first(function ($loker) use ($code, $resultKey) {
+                if (!$loker->qrcode) return false;
+                $decryptedDb = ServiceLoker::decryptRc4Uuid($loker->qrcode->qrcode, $resultKey);
+                $decryptedUser = ServiceLoker::decryptRc4Uuid($code, $resultKey);
+                // dd($decrypted);
+                return $decryptedDb === $decryptedUser;
+            });
 
         // Jika tidak ditemukan, kembalikan respons error
         if (!$matchedLoker) {
@@ -171,12 +179,17 @@ class ApiController extends Controller
             ], 404);
         }
 
+        // dd($matchedLoker->user_id);
+
         // Jika cocok, buat qrcode baru dan update status
-        $newQrCode = ServiceLoker::generateRc4Uuid($key);
+        // dd("sss");
+        $newQrCode = ServiceLoker::generateRc4Uuid($user_id);
+        // dd($newQrCode);
         $dataQr = ModelQRcode::create([
             'user_id' => $matchedLoker->user_id,
             'qrcode' => $newQrCode,
         ]);
+        // dd($dataQr);
 
         $newStatus = $matchedLoker->status == '1' ? '0' : '1';
 
@@ -190,6 +203,7 @@ class ApiController extends Controller
             'loker_id' => $matchedLoker->id,
             'qrcode_id' => $dataQr->id,
             'waktu_penggunaan' => now()->format('H:i:s'),
+            'status' => $matchedLoker->status,
         ]);
 
         return response()->json([

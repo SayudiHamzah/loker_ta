@@ -24,5 +24,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::get('/loker/hak-akses/{code}', [ApiController::class, 'updateStatusByCode'])->name('api.loker.akses-update');
+Route::get('/loker/hak-akses/{user_id}/{code}', [ApiController::class, 'updateStatusByCode'])->name('api.loker.akses-update');
 Route::get('/relay', [ApiController::class, 'inforelay']);

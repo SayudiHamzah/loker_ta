@@ -52,13 +52,13 @@ class ModelLokerController extends Controller
             'user_id' => 'required|exists:users,id', // Lebih baik sekalian validasi exist
             'status' => 'required'
         ]);
-        $key = TokenModel::where('tokenable_id', $request->user_id)->first();
+        // $key = TokenModel::where('tokenable_id', $request->user_id)->first();
 
         if (ModelLoker::count() > 3) {
             // dd("atas");
             return back()->with('error', 'Loker Max 4');
         } else {
-            $EnQr =   ServiceLoker::generateRc4Uuid($key->token);
+            $EnQr =   ServiceLoker::generateRc4Uuid($request->user_id);
             $uniqCode = 'LOKER-' . Str::upper(Str::random(6));
             // Simpan ke tabel qrcodes
             $dataQr = ModelQRcode::create([
@@ -123,7 +123,7 @@ class ModelLokerController extends Controller
     public function update(Request $request, $id)
     {
         $dataloker = ModelLoker::findOrFail($id);
-        $key = TokenModel::where('tokenable_id', $request->user_id)->first();
+        // $key = TokenModel::where('tokenable_id', $request->user_id)->first();
 
         // Cek apakah ada perubahan
         if (
@@ -137,7 +137,8 @@ class ModelLokerController extends Controller
 
             // dd($dataloker);
             // buat baru qr
-            $EnQr =   ServiceLoker::generateRc4Uuid($key->token);
+            // dd($request->user_id);
+            $EnQr =   ServiceLoker::generateRc4Uuid($request->user_id);
 
             $dataQr = ModelQRcode::create([
                 'user_id' => $request->user_id,
@@ -183,28 +184,33 @@ class ModelLokerController extends Controller
 
     public function updateStatus($id, Request $request)
     {
-        // dd($request);
-        $key = TokenModel::where('tokenable_id', $request->user_id)->first();
+        // dd("aa");
+        // $key = TokenModel::where('tokenable_id', $request->user_id)->first();
 
         $dataloker = ModelLoker::findOrFail($id);
-
-        $EnQr =   ServiceLoker::generateRc4Uuid($key->token);
+        // $request->user_id
+        // dd($request->user_id);
+        $EnQr =   ServiceLoker::generateRc4Uuid($request->user_id);
 
         $dataQr = ModelQRcode::create([
             'user_id' => $request->user_id,
             'qrcode' => $EnQr,
         ]);
+        // dd($dataQr);
         // Simpan ke tabel loker
         $dataloker->update([
             'status' => $request->status,
             'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
         ]);
+        // dd($dataloker);
+
 
         ModelLog::create([
             'user_id' => $request->user_id,
             'loker_id' => $request->id,
             'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
             'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
+            'status' => $request->status,
         ]);
         return redirect()->route('loker.show', $dataloker->id)
             ->with('success', 'Loker Updated: ' . $dataloker->name_locker);
@@ -212,37 +218,44 @@ class ModelLokerController extends Controller
     public function updateStatusDash($id, $user_id)
     {
         // dd($request);
-        $key = TokenModel::where('tokenable_id', $user_id)->first();
+        // $key = TokenModel::where('tokenable_id', $user_id)->first();
 
         $dataloker = ModelLoker::findOrFail($id);
-        $EnQr =   ServiceLoker::generateRc4Uuid($key->token);
+        $EnQr =   ServiceLoker::generateRc4Uuid($user_id);
 
         $dataQr = ModelQRcode::create([
             'user_id' => $user_id,
             'qrcode' => $EnQr,
         ]);
+        // dd($dataQr);
         // Simpan ke tabel loker
         if ($dataloker->status == "1") {
             $dataloker->update([
                 'status' => "0",
                 'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
             ]);
+            ModelLog::create([
+                'user_id' => $user_id,
+                'loker_id' => $id,
+                'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+                'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
+                'status' => "0"
+
+            ]);
         } else {
             $dataloker->update([
                 'status' => 1,
                 'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
             ]);
+            ModelLog::create([
+                'user_id' => $user_id,
+                'loker_id' => $id,
+                'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
+                'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
+                'status' => "1"
+            ]);
         }
 
-
-        ModelLog::create([
-            'user_id' => $user_id,
-            'loker_id' => $id,
-            'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
-            'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
-        ]);
-        // return redirect()->route('loker.show', $dataloker->id)
-        //     ->with('success', 'Loker Updated: ' . $dataloker->name_locker);
         return response()->json([
             'success' => true,
             'message' => 'Akses loker berhasil diubah.'
@@ -252,9 +265,9 @@ class ModelLokerController extends Controller
     {
         // dd("masuk");
         $dataloker = ModelLoker::findOrFail($request->id);
-        $key = TokenModel::where('tokenable_id', $dataloker->user_id)->first();
+        // $key = TokenModel::where('tokenable_id', $dataloker->user_id)->first();
 
-        $EnQr =   ServiceLoker::generateRc4Uuid($key->token);
+        $EnQr =   ServiceLoker::generateRc4Uuid($dataloker->user_id);
 
         $dataQr = ModelQRcode::create([
             'user_id' => 1,
@@ -273,6 +286,7 @@ class ModelLokerController extends Controller
             'loker_id' => $request->id,
             'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
             'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
+            'status' => "0"
         ]);
         return response()->json([
             'success' => true,
@@ -284,9 +298,9 @@ class ModelLokerController extends Controller
     {
         // dd("masuk");
         $dataloker = ModelLoker::findOrFail($loker_id);
-        $key = TokenModel::where('tokenable_id', $user_id)->first();
+        // $key = TokenModel::where('tokenable_id', $user_id)->first();
 
-        $EnQr =   ServiceLoker::generateRc4Uuid($key->token);
+        $EnQr =   ServiceLoker::generateRc4Uuid($user_id);
 
         $dataQr = ModelQRcode::create([
             'user_id' => $user_id,

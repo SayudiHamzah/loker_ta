@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ModelLog extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'loker_id', 'waktu_penggunaan', 'qrcode_id'];
+    protected $fillable = ['user_id', 'loker_id', 'waktu_penggunaan', 'qrcode_id', 'status'];
 
     public function qrcode()
     {

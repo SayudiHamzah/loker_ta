@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Str;
+use App\Models\User;
 use App\Models\rc4Model;
+use Illuminate\Support\Str;
 
 class ServiceLoker
 {
@@ -42,17 +43,24 @@ class ServiceLoker
     /**
      * Generate RC4 Encrypted UUID (Base64-encoded, URL-safe)
      */
-    public static function generateRc4Uuid($key): string
+    public static function generateRc4Uuid($user_id): string
     {
         $uuid = Str::uuid()->toString();
-        // $uuid = Str::uuid()->toString();
         $uuidNoDash = str_replace('-', '', $uuid);
-        $encrypted = self::rc4Encrypt($key, $uuidNoDash);
+        $datauser = User::findOrFail($user_id);
+        $data_hak = $datauser->status;
+        $data_created = $datauser->created_at;
+        $gabung = $data_hak . $data_created;
+        $resultKey = str_replace(['-', ' ', ':'], '', $gabung);
+        $encrypted = self::rc4Encrypt($resultKey, $uuidNoDash);
+        $byteArray = array_values(unpack('C*', $encrypted));
         $datafinal = strtr(base64_encode($encrypted), '+/', '-_');
         rc4Model::create([
             'uuid' => $uuidNoDash,
             'uuid_rc4' => $encrypted,
-            'uuid_encode' => $datafinal
+            'uuid_encode' => $datafinal,
+            'key' => $resultKey,
+            'data_byte' => json_encode($byteArray)
         ]);
         return $datafinal;
     }
@@ -64,8 +72,10 @@ class ServiceLoker
     {
         // Balikkan base64 URL-safe ke standar
         $base64 = strtr($encoded, '-_', '+/');
-        $encrypted = base64_decode($base64);
+        // dd($base64);
 
+        $encrypted = base64_decode($base64);
+        // dd($encrypted);
         return self::rc4Encrypt($key, $encrypted);
     }
 }

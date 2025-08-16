@@ -35,19 +35,6 @@ class ServiceApi
         return $res;
     }
 
-    // public static function generateRc4Uuid()
-    // {
-    //     $self::$key = 'secret_key';
-    //     $uuid = Str::uuid()->toString();
-    //     $encrypted = ServiceLoker::rc4Encrypt($key, $uuid); // ✅ akses $this->key
-    //     $datafinal = strtr(base64_encode($encrypted), '+/', '-_');
-    //     rc4Model::create([
-    //         'uuid_rc4' => $uuid,
-    //         'uuid_encode' => $datafinal
-    //     ]);
-    //     dd($datafinal);
-    //     return $datafinal;
-    // }
 
     public static function  decryptRc4Uuid($encryptedBase64, $key)
     {
