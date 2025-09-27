@@ -33,7 +33,7 @@
                                 </h3>
 
                                 <div class="timeline-body">
-                                    <table class="table table-borderless text-white">
+                                    <table class="table table-borderless text-dark">
                                         <tr>
                                             <td>Nama Loker</td>
                                             <td>:</td>

@@ -28,18 +28,19 @@
                             <div class="card mb-2 h-100 text-white">
                                 <div class="card-bg"
                                     style="
-                                background-image: url('../dist/img/A2.jpg');
+                                {{--  background-image: url('../dist/img/A2.jpg');  --}}
                                 background-size: cover;
                                 background-position: center;
+                                color:white;
                                 height: 100%;
                                 min-height: 300px; /* Sesuaikan tinggi minimal */
                                 position: relative;
                               ">
-                                    <div class="card-img-overlay" style="background-color: rgba(0,0,0,0.5);">
-                                        <h5 class="card-title text-primary">
-                                            E-Locker dengan Keamanan Kriptografi Algoritma RC4
+                                    <div class="card-img-overlay">
+                                        <h5 class="card-title text-dark">
+                                         <b> E-Locker dengan Keamanan Kriptografi Algoritma RC4</b>
                                         </h5>
-                                        <p class="card-text pb-1 pt-1">
+                                        <p class="card-text pb-1 pt-1 text-dark">
                                             E-locker adalah sistem penyimpanan barang pribadi berbasis teknologi digital
                                             yang dirancang untuk memberikan keamanan dan kemudahan akses. Sistem ini
                                             menggunakan loker yang dilengkapi dengan kunci digital, seperti QR code, sebagai

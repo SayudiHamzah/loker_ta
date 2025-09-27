@@ -33,9 +33,11 @@
                                 </h3>
 
                                 <div class="timeline-body">
-                                    <table class="table table-borderless text-white">
+                                    <table class="table table-borderless">
                                         <tr>
-                                            <td>Nama Loker</td>
+                                            <td style="color: black">
+                                                <p style="color: black"> Nama Loker</p>
+                                               </td>
                                             <td>:</td>
                                             <td>
                                                 {{ $log->loker->name_locker }}
