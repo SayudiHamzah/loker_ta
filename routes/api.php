@@ -17,7 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('loker/{id}', [ApiController::class, 'show'])->name('api.loker.show');
     Route::post('/logout', [ApiController::class, 'logout']);
     Route::put('/loker/update-status/{id}', [ModelLokerController::class, 'updateStatus'])->name('loker.status');
-    Route::put('/loker/hak-hapus-akses/{id}/{loker_id}', [ModelLokerController::class, 'deleteStatusApi'])->name('loker.delete.akses');
+    Route::put('/loker/hak-hapus-akses/{user_id}/{loker_id}', [ModelLokerController::class, 'deleteStatusApi'])->name('loker.delete.akses');
 
     // Route::put('/loker/update-dashst/{id}/{user_id}', [ModelLokerController::class, 'updateStatusDash'])->name('loker.statusDash');
     // GET | /users/{user} | show | users.show

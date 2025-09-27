@@ -101,6 +101,14 @@ class ApiController extends Controller
     public function loker_akses(Request $request)
     {
         $datas = ModelLoker::where('user_id', Auth::id())->get();
+        $lastId = ModelLoker::where('user_id', Auth::id())
+            ->latest('id')
+            ->value('id');
+        $qrcode = ModelLoker::where('user_id', Auth::id())
+            ->with('qrcode')
+            ->latest('id')
+            ->first()?->qrcode?->qrcode;
+
 
         if ($datas->isEmpty()) {
             return response()->json([
@@ -113,7 +121,9 @@ class ApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data loker milik user berhasil diambil.',
-            'data' => $datas[0]
+            'data' => $datas[0],
+            'lastId'=>$lastId,
+            "qrcode"=>$qrcode
         ]);
     }
     public function show($id, $qrcode_id)

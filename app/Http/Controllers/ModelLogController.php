@@ -12,7 +12,9 @@ class ModelLogController extends Controller
      */
     public function index()
     {
-        $datalog = ModelLog::with('qrcode', 'user', 'loker')->get();
+        $datalog = ModelLog::with('qrcode', 'user', 'loker')
+        ->orderBy('created_at', 'desc') // urutkan dari terbaru ke lama
+        ->get();
         // dd($datalog);
         return view('datalog.index', compact("datalog"));
 
