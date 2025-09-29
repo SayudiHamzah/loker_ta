@@ -15,8 +15,13 @@
     <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{--  <link rel="stylesheet" href="../../">  --}}
+    <!-- Theme style -->
+    {{--  <link rel="stylesheet" href="../../">  --}}
     <style>
         .qr-code-container {
             border: 2px solid #007bff;
@@ -197,6 +202,7 @@
     <!-- ChartJS -->
     <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('dist/js/pages/dashboard2.js') }}"></script>
+
 
     <script>
         const startYear = 2024;

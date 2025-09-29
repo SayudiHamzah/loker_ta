@@ -190,7 +190,7 @@ class ModelLokerController extends Controller
         $dataloker = ModelLoker::findOrFail($id);
         // $request->user_id
         // dd($request->user_id);
-        $EnQr =   ServiceLoker::generateRc4Uuid($request->user_id);
+        $EnQr =   ServiceLoker::generateRc4Uuid($request->user_id, $dataloker->name_locker);
 
         $dataQr = ModelQRcode::create([
             'user_id' => $request->user_id,
@@ -221,7 +221,8 @@ class ModelLokerController extends Controller
         // $key = TokenModel::where('tokenable_id', $user_id)->first();
 
         $dataloker = ModelLoker::findOrFail($id);
-        $EnQr =   ServiceLoker::generateRc4Uuid($user_id);
+        // $EnQr =   ServiceLoker::generateRc4Uuid($user_id);
+        $EnQr =   ServiceLoker::generateRc4Uuid($user_id, $dataloker->name_locker);
 
         $dataQr = ModelQRcode::create([
             'user_id' => $user_id,
@@ -240,7 +241,6 @@ class ModelLokerController extends Controller
                 'qrcode_id' => $dataQr->id, // Gunakan qrcode_id jika field kamu foreign key
                 'waktu_penggunaan' => Carbon::now()->format('H:i:s'),
                 'status' => "0"
-
             ]);
         } else {
             $dataloker->update([

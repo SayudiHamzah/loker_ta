@@ -40,7 +40,6 @@
                         <i class="fas fa-user"></i>
                         <p>
                             User
-                            <span class="badge badge-info right">2</span>
                         </p>
                     </a>
                 </li>
@@ -56,6 +55,12 @@
                     <a href="{{ url('datalog') }}" class="nav-link {{ Request::is('datalog') ? 'active' : '' }}">
                         <i class="fas fa-clock"></i>
                         <p>Datalog</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('data-proses') }}" class="nav-link {{ Request::is('data-proses') ? 'active' : '' }}">
+                        <i class="fas fa-database"></i>
+                        <p>Data Proses</p>
                     </a>
                 </li>
 

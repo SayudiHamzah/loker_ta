@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DataProsesController;
+use App\Http\Controllers\ManualController;
 use App\Http\Controllers\ModelLogController;
 use App\Http\Controllers\ModelLokerController;
-use App\Http\Controllers\ManualController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -50,6 +52,7 @@ Route::resource('datalog', ModelLogController::class)->except(['create','edit','
 
 Route::resource('manual', ModelLogController::class)->except(['create','edit','update', 'destroy','store']);
 Route::get('/manual', [ManualController::class, 'index'])->name('manual');
+Route::get('/data-proses', [DataProsesController::class, 'index'])->name('data-proses');
 
 
 // example route
