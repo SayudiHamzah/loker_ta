@@ -49,32 +49,43 @@
                     <table class="table table-bordered table-striped">
                         <thead class="thead-dark">
                             <tr>
-                                <th>#</th>
-                                <th>Nama User</th>
-                                <th>Nama Loker</th>
-                                <th>Key</th>
+                                <th>No</th>
+                                <th>User</th>
+                                <th>Nama Locker</th>
+                                {{--  <th>Key</th>
                                 <th>UUID</th>
                                 <th>Hasil KSA</th>
                                 <th>Hasil PGRA</th>
-                                <th>Hasil Desimal</th>
-                                <th>Hasil Enkripsi</th>
+                                <th>Hasil Desimal</th>  --}}
                                 <th>Tanggal</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($encryptions as $key => $item)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ $item->user->name ?? '-' }}</td>
-                                    <td>{{ $item->name_locker ?? '-' }}</td>
-                                    <td>{{ $item->key ?? '-' }}</td>
-                                    <td>{{ $item->uuid ?? '-' }}</td>
-                                    <td><code>{{ $item->hasil_ksa }}</code></td>
-                                    <td><code>{{ $item->hasil_pgra }}</code></td>
-                                    <td><code>{{ $item->hasil_desimal }}</code></td>
-                                    <td>{{ $item->hasil_enkripsi }}</td>
-                                    <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
-                                </tr>
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $item->user->name ?? '-' }}</td>
+                                <td>{{ $item->name_locker ?? '-' }}</td>
+                                {{--  <td>{{ $item->key ?? '-' }}</td>
+                                <td>{{ $item->uuid ?? '-' }}</td>
+                                <td class="text-truncate" style="max-width: 150px;">
+                                    <code title="{{ $item->hasil_ksa }}">{{ Str::limit($item->hasil_ksa, 50) }}</code>
+                                </td>
+                                <td class="text-truncate" style="max-width: 150px;">
+                                    <code title="{{ $item->hasil_pgra }}">{{ Str::limit($item->hasil_pgra, 50) }}</code>
+                                </td>
+                                <td class="text-truncate" style="max-width: 150px;">
+                                    <code title="{{ $item->hasil_desimal }}">{{ Str::limit($item->hasil_desimal, 50) }}</code>
+                                </td>  --}}
+                                <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                <td>
+                                    <a href="{{ route('data-proses.show', ['encryption', $item->id]) }}"
+                                       class="btn btn-info btn-sm" title="Lihat Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
                             @empty
                                 <tr>
                                     <td colspan="6" class="text-center">Tidak ada data enkripsi ditemukan</td>
@@ -98,15 +109,16 @@
                     <table class="table table-bordered table-striped">
                         <thead class="thead-dark">
                             <tr>
-                                <th>#</th>
-                                <th>Nama User</th>
-                                <th>Nama Loker</th>
-                                <th>Key</th>
+                                <th>No</th>
+                                <th>User</th>
+                                <th>Nama Locker</th>
+                                {{--  <th>Key</th>
                                 <th>UUID</th>
                                 <th>Hasil KSA</th>
                                 <th>Hasil PGRA</th>
-                                <th>Hasil Desimal</th>
+                                <th>Hasil Desimal</th>  --}}
                                 <th>Tanggal</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -115,12 +127,24 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $item->user->name ?? '-' }}</td>
                                     <td>{{ $item->name_locker ?? '-' }}</td>
-                                    <td>{{ $item->key ?? '-' }}</td>
+                                    {{--  <td>{{ $item->key ?? '-' }}</td>
                                     <td>{{ $item->uuid ?? '-' }}</td>
-                                    <td><code>{{ $item->hasil_ksa }}</code></td>
-                                    <td><code>{{ $item->hasil_pgra }}</code></td>
-                                    <td><code>{{ $item->hasil_desimal }}</code></td>
+                                    <td class="text-truncate" style="max-width: 150px;">
+                                        <code title="{{ $item->hasil_ksa }}">{{ Str::limit($item->hasil_ksa, 50) }}</code>
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 150px;">
+                                        <code title="{{ $item->hasil_pgra }}">{{ Str::limit($item->hasil_pgra, 50) }}</code>
+                                    </td>
+                                    <td class="text-truncate" style="max-width: 150px;">
+                                        <code title="{{ $item->hasil_desimal }}">{{ Str::limit($item->hasil_desimal, 50) }}</code>
+                                    </td>  --}}
                                     <td>{{ $item->created_at->format('d-m-Y H:i') }}</td>
+                                    <td>
+                                        <a href="{{ route('data-proses.show', ['decryption', $item->id]) }}"
+                                           class="btn btn-info btn-sm" title="Lihat Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -132,7 +156,26 @@
                 </div>
             </div>
         </div>
-
     </div>
+    <style>
+        .text-truncate {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .table code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.875em;
+            cursor: help;
+        }
+
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+        }
+    </style>
 </section>
 @endsection

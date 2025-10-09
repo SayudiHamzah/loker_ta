@@ -93,6 +93,145 @@
         input:checked~.label-text {
             color: #000;
         }
+
+        /* Gaya dasar untuk tabel */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        /* Gaya khusus untuk kolom dengan kode panjang */
+        .code-cell {
+            max-width: 150px;
+            /* Sesuaikan dengan kebutuhan */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: help;
+            /* Menunjukkan bahwa ada tooltip */
+            position: relative;
+        }
+
+        /* Tooltip untuk menampilkan teks lengkap */
+        .code-cell:hover::after {
+            content: attr(data-full-text);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background-color: #333;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            white-space: normal;
+            width: 300px;
+            /* Lebar tooltip */
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Gaya untuk kode */
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        /* Responsif untuk layar kecil */
+        @media (max-width: 768px) {
+            .code-cell {
+                max-width: 100px;
+            }
+
+            .code-cell:hover::after {
+                width: 200px;
+            }
+
+
+            /* Tambahan CSS untuk halaman data proses */
+            .text-truncate {
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .table code {
+                background: #f8f9fa;
+                padding: 2px 6px;
+                border-radius: 3px;
+                font-size: 0.875em;
+                cursor: help;
+            }
+
+            .nav-tabs .nav-link.active {
+                font-weight: bold;
+                border-bottom: 3px solid #007bff;
+            }
+
+            .code-block {
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 4px;
+                padding: 12px;
+                max-height: 200px;
+                overflow-y: auto;
+                word-break: break-all;
+                white-space: pre-wrap;
+                font-family: 'Courier New', monospace;
+                font-size: 0.9em;
+            }
+
+            .code-block code {
+                background: none;
+                padding: 0;
+                color: #e83e8c;
+            }
+
+            /* Responsive design */
+            @media (max-width: 768px) {
+                .table-responsive {
+                    font-size: 0.875rem;
+                }
+
+                .btn-sm {
+                    padding: 0.25rem 0.5rem;
+                    font-size: 0.775rem;
+                }
+
+                .text-truncate {
+                    max-width: 150px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                .table code {
+                    background: #f8f9fa;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-size: 0.875em;
+                    cursor: help;
+                }
+
+                .nav-tabs .nav-link.active {
+                    font-weight: bold;
+                }
+            }
+        }
     </style>
 
 </head>
@@ -213,7 +352,7 @@
 
 
 
-    @yield('js_aja')
+    @yield('scripts')
 
 
 </body>

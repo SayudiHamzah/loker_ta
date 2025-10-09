@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\rc4Model;
 use App\Models\Decryption;
 use App\Models\Encryption;
 use Illuminate\Http\Request;
@@ -66,9 +67,32 @@ class DataProsesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($type, $id)
     {
-        //
+        try {
+            if ($type === 'encryption') {
+                $item = Encryption::with('user')->findOrFail($id);
+                // dd($item);
+                $title = 'Detail Enkripsi';
+                // $uuidEncode = rc4Model::where('uuid')findOrFail($item->uuid);
+                $uuidEncode = rc4Model::where('uuid', $item->uuid)->firstOrFail();
+
+                // dd($uuidEncode->uuid_encode);
+                $encodeVal = $uuidEncode->uuid_encode;
+            } elseif ($type === 'decryption') {
+                $item = Decryption::with('user')->findOrFail($id);
+                $title = 'Detail Dekripsi';
+                $uuidEncode = rc4Model::where('uuid', $item->uuid)->firstOrFail();
+                $encodeVal = $uuidEncode->uuid_encode;
+
+            } else {
+                abort(404);
+            }
+
+            return view('data-proses.detail', compact('item', 'type', 'title', 'encodeVal'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404, 'Data tidak ditemukan');
+        }
     }
 
     /**

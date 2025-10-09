@@ -53,8 +53,7 @@ Route::resource('datalog', ModelLogController::class)->except(['create','edit','
 Route::resource('manual', ModelLogController::class)->except(['create','edit','update', 'destroy','store']);
 Route::get('/manual', [ManualController::class, 'index'])->name('manual');
 Route::get('/data-proses', [DataProsesController::class, 'index'])->name('data-proses');
-
-
+Route::get('/data-proses/{type}/{id}', [DataProsesController::class, 'show'])->name('data-proses.show');
 // example route
 // Method | URI | Action | Route Name
 // GET | /users | index | users.index
